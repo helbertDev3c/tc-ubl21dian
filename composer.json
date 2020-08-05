@@ -1,8 +1,8 @@
 {
-    "name": "stenfrank/ubl21dian",
+    "name": "3creativessas/tc-ubl21dian",
     "type": "library",
     "description": "Core for electronic invoicing pre-validation - DIAN UBL 2.1",
-    "homepage": "https://soenac.com",
+    "homepage": "http://www.3creatives.com",
     "keywords": [
         "soap dian",
         "web service",
@@ -21,11 +21,17 @@
             "name": "Stenfrank",
             "email": "frank921713@hotmail.com",
             "homepage": "https://soenac.com"
+        },
+        {
+            "name": "helbertDev3c",
+            "email": "helbert.arias@3cratives.com.co",
+            "homepage": "http://www.3creatives.com",
+            "role": "Developer"
         }
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">= 5.4",
+        "php": ">= 7.2",
         "ext-dom": "*",
         "ext-xml": "*",
         "ext-curl": "*",
