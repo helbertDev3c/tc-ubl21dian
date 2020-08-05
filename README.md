@@ -11,10 +11,8 @@ Core for electronic invoicing pre-validation - DIAN UBL 2.1.
 * 2.0: Contains valid proofs for the sending of debit notes and document name standard.
 
 # Resources
-## Documentation
 
-UBL21 DIAN {.entry-title}
-==========
+## Documentation
 
 Última actualización Nov 16, 2019 at 3:09PM | Publicado en Jun 30, 2019
 
@@ -39,7 +37,7 @@ Núcleo de Facturación Electrónica Validación Previa DIAN UBL 2.1.
 Instalar con [composer](https://getcomposer.org/)
 
 ``` {.wp-block-code}
-composer require stenfrank/ubl21dian
+composer require 3creativessas/tc-ubl21dian
 ```
 
 ### SOAP uso básico:
