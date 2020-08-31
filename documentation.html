@@ -1,0 +1,245 @@
+<article id="post-431" class="et_pb_post post-431 post type-post status-publish format-standard hentry category-componentes category-php category-ubl21dian tag-binarysecuritytoken tag-php tag-soap tag-ubl2-1 tag-xml">
+											<div class="et_post_meta_wrapper">
+							<h1 class="entry-title">UBL21 DIAN</h1>
+
+						<p class="post-meta"><span class="published">Última actualización Nov 16, 2019 at 3:09PM | Publicado en Jun 30, 2019</span> </p>
+												</div> <!-- .et_post_meta_wrapper -->
+				
+					<div class="entry-content">
+					
+<p>Núcleo de Facturación Electrónica Validación Previa DIAN UBL 2.1.</p>
+
+
+
+<h3>Tags:</h3>
+
+
+
+<ul><li>1.0: Contiene pruebas válidas con el token de seguridad binario (SOAP) y la firma XAdES (XML) con los algoritmos sha1, sha256 y sha512.</li><li>1.1: Contiene las plantillas principales para el consumo del servicio web, requiere curl como una dependencia.</li><li>11.1.1: Se soluciona el error de canonización.</li><li>1.2: Contiene pruebas válidas para el envío de notas de crédito y el cálculo del CUDE.</li><li>1.3: Licencia LGPL.</li><li>2.0: Contiene pruebas válidas para el envío de notas de débito y el nombre del documento estándar.</li></ul>
+
+
+
+<span id="more-431"></span>
+
+
+
+<h3>Cómo instalar:</h3>
+
+
+
+<p>Instalar con <a rel="noreferrer noopener" aria-label="composer (abre en una nueva pestaña)" href="https://getcomposer.org/" target="_blank">composer</a></p>
+
+
+
+<pre class="wp-block-code"><code class="hljs ruby">composer <span class="hljs-keyword">require</span> stenfrank/ubl21dian</code></pre>
+
+
+
+<h3>SOAP uso básico:</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-keyword">use</span> <span class="hljs-title">DOMDocument</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">BinarySecurityToken</span>\<span class="hljs-title">SOAP</span>;
+
+$xmlString = <span class="hljs-string">&lt;&lt;&lt;XML
+&lt;soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:wcf="http://wcf.dian.colombia"&gt;
+    &lt;soap:Header/&gt;
+    &lt;soap:Body&gt;
+        &lt;wcf:GetStatus&gt;
+            &lt;!--Optional:--&gt;
+            &lt;wcf:trackId&gt;123456666&lt;/wcf:trackId&gt;
+        &lt;/wcf:GetStatus&gt;
+    &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;
+XML;</span>
+
+$pathCertificate = <span class="hljs-string">'PATH_CERTIFICATE.p12'</span>;
+$passwors = <span class="hljs-string">'PASSWORS_CERTIFICATE'</span>;
+
+$domDocument = <span class="hljs-keyword">new</span> DOMDocument();
+$domDocument-&gt;loadXML($xmlString);
+
+$soap = <span class="hljs-keyword">new</span> SOAP($pathCertificate, $passwors);
+$soap-&gt;Action = <span class="hljs-string">'http://wcf.dian.colombia/IWcfDianCustomerServices/GetStatus'</span>;
+
+$soap-&gt;sign($domDocument-&gt;saveXML());
+
+file_put_contents(<span class="hljs-string">'./SOAPDIAN21.xml'</span>, $soap-&gt;xml);</code></pre>
+
+
+
+<h3>XAdES SHA1 uso básico:</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-keyword">use</span> <span class="hljs-title">DOMDocument</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">XAdES</span>\<span class="hljs-title">SignInvoice</span>;
+
+$xmlString = <span class="hljs-string">&lt;&lt;&lt;XML
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Invoice&gt;
+    &lt;ext:UBLExtensions&gt;
+        &lt;ext:UBLExtension&gt;
+            &lt;ext:ExtensionContent/&gt;
+        &lt;/ext:UBLExtension&gt;
+        &lt;ext:UBLExtension&gt;
+            &lt;ext:ExtensionContent/&gt;
+        &lt;/ext:UBLExtension&gt;
+    &lt;/ext:UBLExtensions&gt;
+&lt;/Invoice&gt;
+XML;</span>
+
+$pathCertificate = <span class="hljs-string">'PATH_CERTIFICATE.p12'</span>;
+$passwors = <span class="hljs-string">'PASSWORS_CERTIFICATE'</span>;
+
+$domDocument = <span class="hljs-keyword">new</span> DOMDocument();
+$domDocument-&gt;loadXML($xmlString);
+
+$signInvoice = <span class="hljs-keyword">new</span> SignInvoice($pathCertificate, $passwors, $xmlString, SignInvoice::ALGO_SHA1);
+
+file_put_contents(<span class="hljs-string">'./SING1.xml'</span>, $signInvoice-&gt;xml);</code></pre>
+
+
+
+<h3>XAdES SHA256 uso básico:</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-keyword">use</span> <span class="hljs-title">DOMDocument</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">XAdES</span>\<span class="hljs-title">SignInvoice</span>;
+
+$xmlString = <span class="hljs-string">&lt;&lt;&lt;XML
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Invoice&gt;
+    &lt;ext:UBLExtensions&gt;
+        &lt;ext:UBLExtension&gt;
+            &lt;ext:ExtensionContent/&gt;
+        &lt;/ext:UBLExtension&gt;
+        &lt;ext:UBLExtension&gt;
+            &lt;ext:ExtensionContent/&gt;
+        &lt;/ext:UBLExtension&gt;
+    &lt;/ext:UBLExtensions&gt;
+&lt;/Invoice&gt;
+XML;</span>
+
+$pathCertificate = <span class="hljs-string">'PATH_CERTIFICATE.p12'</span>;
+$passwors = <span class="hljs-string">'PASSWORS_CERTIFICATE'</span>;
+
+$domDocument = <span class="hljs-keyword">new</span> DOMDocument();
+$domDocument-&gt;loadXML($xmlString);
+
+$signInvoice = <span class="hljs-keyword">new</span> SignInvoice($pathCertificate, $passwors, $xmlString);
+
+file_put_contents(<span class="hljs-string">'./SING256.xml'</span>, $signInvoice-&gt;xml);</code></pre>
+
+
+
+<h3>XAdES SHA512 uso básico:</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-keyword">use</span> <span class="hljs-title">DOMDocument</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">XAdES</span>\<span class="hljs-title">SignInvoice</span>;
+
+$xmlString = <span class="hljs-string">&lt;&lt;&lt;XML
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Invoice&gt;
+    &lt;ext:UBLExtensions&gt;
+        &lt;ext:UBLExtension&gt;
+            &lt;ext:ExtensionContent/&gt;
+        &lt;/ext:UBLExtension&gt;
+        &lt;ext:UBLExtension&gt;
+            &lt;ext:ExtensionContent/&gt;
+        &lt;/ext:UBLExtension&gt;
+    &lt;/ext:UBLExtensions&gt;
+&lt;/Invoice&gt;
+XML;</span>
+
+$pathCertificate = <span class="hljs-string">'PATH_CERTIFICATE.p12'</span>;
+$passwors = <span class="hljs-string">'PASSWORS_CERTIFICATE'</span>;
+
+$domDocument = <span class="hljs-keyword">new</span> DOMDocument();
+$domDocument-&gt;loadXML($xmlString);
+
+$signInvoice = <span class="hljs-keyword">new</span> SignInvoice($pathCertificate, $passwors, $xmlString, SignInvoice::ALGO_SHA512);
+
+file_put_contents(<span class="hljs-string">'./SING512.xml'</span>, $signInvoice-&gt;xml);</code></pre>
+
+
+
+<h3>Calcular el código de seguridad del software:</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-comment">// If you assign the values "softwareID" and "pin" the library will calculate and assign "Software Security Code" at the moment of signing the document.</span>
+$xadesDIAN-&gt;softwareID = <span class="hljs-string">'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'</span>;
+$xadesDIAN-&gt;pin = <span class="hljs-string">'12345'</span>;</code></pre>
+
+
+
+<h3>Calcular «UUID» (CUFE):</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-comment">// If you assign the value "technicalKey" the library will calculate and assign "UUID" (CUFE) at the moment of signing the document</span>
+$xadesDIAN-&gt;technicalKey = <span class="hljs-string">'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'</span>;</code></pre>
+
+
+
+<h3>Calcular «UUID» (CUDE):</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-comment">// If you assign the value "pin" the library will calculate and assign "UUID" (CUDE) at the moment of signing the document</span>
+$signCreditNote-&gt;pin = <span class="hljs-string">'xxxxx'</span>;</code></pre>
+
+
+
+<h3 id="web-service">Consumo de servicios web (Cliente):</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">Client</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">Templates</span>\<span class="hljs-title">SOAP</span>\<span class="hljs-title">GetStatusZip</span>;
+
+$pathCertificate = <span class="hljs-string">'PATH_CERTIFICATE.p12'</span>;
+$passwors = <span class="hljs-string">'PASSWORS_CERTIFICATE'</span>;
+
+$getStatusZip = <span class="hljs-keyword">new</span> GetStatusZip($pathCertificate, $passwors);
+$getStatusZip-&gt;trackId = <span class="hljs-string">'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'</span>;
+
+<span class="hljs-comment">// Sign</span>
+$getStatusZip-&gt;sign();
+
+$client = <span class="hljs-keyword">new</span> Client($getStatusZip);
+
+<span class="hljs-comment">// DIAN Response Web Service</span>
+<span class="hljs-keyword">return</span> $client;</code></pre>
+
+
+
+<h3>Consumo de servicios web (Plantilla):</h3>
+
+
+
+<pre class="wp-block-code"><code class="hljs php"><span class="hljs-keyword">use</span> <span class="hljs-title">Stenfrank</span>\<span class="hljs-title">UBL21dian</span>\<span class="hljs-title">Templates</span>\<span class="hljs-title">SOAP</span>\<span class="hljs-title">GetStatusZip</span>;
+
+$pathCertificate = <span class="hljs-string">'PATH_CERTIFICATE.p12'</span>;
+$passwors = <span class="hljs-string">'PASSWORS_CERTIFICATE'</span>;
+
+$getStatusZip = <span class="hljs-keyword">new</span> GetStatusZip($pathCertificate, $passwors);
+$getStatusZip-&gt;trackId = <span class="hljs-string">'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'</span>;
+
+<span class="hljs-comment">// Sign to send - DIAN Response Web Service</span>
+<span class="hljs-keyword">return</span> $getStatusZip-&gt;signToSend();</code></pre>
+
+
+
+<p></p>
+					</div> <!-- .entry-content -->
+					<div class="et_post_meta_wrapper">
+					
+<div id="disqus_thread"><iframe id="dsq-app8973" name="dsq-app8973" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="https://disqus.com/embed/comments/?base=default&amp;f=soenac&amp;t_i=431%20https%3A%2F%2Fsoenac.com%2F%3Fp%3D431&amp;t_u=https%3A%2F%2Fsoenac.com%2Fubl21-dian%2F&amp;t_e=UBL21%20DIAN&amp;t_d=UBL21%20DIAN%20-%20SOENAC%20SAS&amp;t_t=UBL21%20DIAN&amp;s_o=default#version=25e948b7497d4d33bb9de5f27349c037" horizontalscrolling="no" verticalscrolling="no" style="height: 535px !important;"></iframe></div>
+					</div> <!-- .et_post_meta_wrapper -->
+				</article>

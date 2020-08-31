@@ -1,9 +1,9 @@
 <?php
 
-namespace Stenfrank\UBL21dian\Templates\SOAP;
+namespace ubl21dian\Templates\SOAP;
 
-use Stenfrank\UBL21dian\Templates\Template;
-use Stenfrank\UBL21dian\Templates\CreateTemplate;
+use ubl21dian\Templates\Template;
+use ubl21dian\Templates\CreateTemplate;
 
 /**
  * Get status.
@@ -32,9 +32,12 @@ class GetStatus extends Template implements CreateTemplate
      * @param string $pathCertificate
      * @param string $passwors
      */
-    public function __construct($pathCertificate, $passwors)
+    public function __construct($pathCertificate, $passwors, $Ambiente = false)
     {
         parent::__construct($pathCertificate, $passwors);
+        if($Ambiente)
+          $this->To = $Ambiente;
+//          $this->To = 'https://vpfe.dian.gov.co/WcfDianCustomerServices.svc?wsdl';
     }
 
     /**

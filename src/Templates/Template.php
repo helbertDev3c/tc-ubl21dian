@@ -1,10 +1,10 @@
 <?php
 
-namespace Stenfrank\UBL21dian\Templates;
+namespace ubl21dian\Templates;
 
 use Exception;
-use Stenfrank\UBL21dian\Client;
-use Stenfrank\UBL21dian\BinarySecurityToken\SOAP;
+use ubl21dian\Client;
+use ubl21dian\BinarySecurityToken\SOAP;
 
 /**
  * Template.
@@ -42,13 +42,13 @@ class Template extends SOAP
      *
      * @return \Stenfrank\UBL21dian\Client
      */
-    public function signToSend(): Client
+    public function signToSend($GuardarEn = false): Client
     {
         $this->requiredProperties();
 
         parent::sign($this->createTemplate());
 
-        return new Client($this);
+        return new Client($this, $GuardarEn);
     }
 
     /**

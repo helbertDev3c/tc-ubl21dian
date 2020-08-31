@@ -1,10 +1,10 @@
 <?php
 
-namespace Stenfrank\UBL21dian;
+namespace ubl21dian;
 
 use DOMDocument;
 use Exception;
-use Stenfrank\UBL21dian\Templates\Template;
+use ubl21dian\Templates\Template;
 
 /**
  * Client.
@@ -37,7 +37,7 @@ class Client
      *
      * @param \Stenfrank\UBL21dian\Templates\Template $template
      */
-    public function __construct(Template $template)
+    public function __construct(Template $template, $GuardarEn = false)
     {
         $this->curl = curl_init();
 
@@ -54,6 +54,12 @@ class Client
             'Content-type: application/soap+xml',
             'Content-length: '.strlen($template->xml),
         ]);
+        $GuardarEn = preg_replace("/[\r\n|\n|\r]+/", "", $GuardarEn);
+        if ($GuardarEn){
+          $file = fopen($GuardarEn, "w");
+          fwrite($file, $template->xml);
+          fclose($file);
+        }  
 
         $this->exec();
 
@@ -85,13 +91,19 @@ class Client
      *
      * @return object
      */
-    public function getResponseToObject()
+    public function getResponseToObject($GuardarEn = false)
     {
         try {
             $xmlResponse = new DOMDocument();
             $xmlResponse->loadXML($this->response);
-
+            $GuardarEn = preg_replace("/[\r\n|\n|\r]+/", "", $GuardarEn);
+            if($GuardarEn){
+                $file = fopen($GuardarEn, "w");
+                fwrite($file, $this->response);
+                fclose($file);
+            }
             return $this->xmlToObject($xmlResponse);
+            
         } catch (\Exception $e) {
             throw new Exception('Class '.get_class($this).': '.$this->to.' '.$this->response);
         }

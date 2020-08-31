@@ -6,25 +6,23 @@ use ubl21dian\Templates\Template;
 use ubl21dian\Templates\CreateTemplate;
 
 /**
- * Get status zip.
+ * Send Event.
  */
-class GetStatusZip extends Template implements CreateTemplate
+class SendEvent extends Template implements CreateTemplate
 {
     /**
      * Action.
      *
      * @var string
      */
-    public $Action = 'http://wcf.dian.colombia/IWcfDianCustomerServices/GetStatusZip';
+    public $Action = 'http://wcf.dian.colombia/IWcfDianCustomerServices/SendEventUpdateStatus';
 
     /**
      * Required properties.
      *
      * @var array
      */
-    protected $requiredProperties = [
-        'trackId',
-    ];
+    protected $requiredProperties = ['contentFile'];
 
     /**
      * Construct.
@@ -32,11 +30,10 @@ class GetStatusZip extends Template implements CreateTemplate
      * @param string $pathCertificate
      * @param string $passwors
      */
-    public function __construct($pathCertificate, $passwors, $Ambiente = false)
+    public function __construct($pathCertificate, $passwors)
     {
         parent::__construct($pathCertificate, $passwors);
-        if ($Ambiente)
-          $this->To = $Ambiente;
+        $this->To = 'https://vpfe.dian.gov.co/WcfDianCustomerServices.svc?wsdl';
     }
 
     /**
@@ -48,12 +45,13 @@ class GetStatusZip extends Template implements CreateTemplate
     {
         return $this->templateXMLSOAP = <<<XML
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:wcf="http://wcf.dian.colombia">
-    <soap:Body>
-        <wcf:GetStatusZip>
-            <!--Optional:-->
-            <wcf:trackId>{$this->trackId}</wcf:trackId>
-        </wcf:GetStatusZip>
-    </soap:Body>
+   <soap:Header/>
+   <soap:Body>
+      <wcf:SendEventUpdateStatus>
+         <!--Optional:-->
+         <wcf:contentFile>{$this->contentFile}</wcf:contentFile>
+      </wcf:SendEventUpdateStatus>
+   </soap:Body>
 </soap:Envelope>
 XML;
     }
